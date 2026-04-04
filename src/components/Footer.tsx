@@ -501,8 +501,8 @@ const Footer = () => {
 
                               {/* Bottom bar */}
                               <div className="ftr-bottom">
-                                   <p className="ftr-bottom-copy">
-                                        © 2025 <a href="/#">FUEL PLATE</a> by MMC. All Rights Reserved.
+                                   <p className="ftr-bottom-copy !m-0">
+                                        © 2026 <a href="/#">FUEL PLATE</a>. All Rights Reserved.
                                    </p>
                                    <div className="ftr-bottom-links">
                                         <Link href="/#" className="ftr-bottom-link">Terms & Conditions</Link>
