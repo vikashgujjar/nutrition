@@ -1,7 +1,9 @@
-'use client';
+"use client";
+
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -10,61 +12,121 @@ import 'swiper/css/pagination';
 
 const CompareSection = () => {
   return (
-    <section className="2xxl:py-25 xl:17.5 md:py-12.5 sm:py-10 py-7.5 p-0 bg-light overflow-hidden">
-      <div className="container">
-        <div className="section-head style-9 mb-7.5 text-center">
-          <span className="text-primary font-semibold leading-5 uppercase text-lg inline-flex gap-1.25 items-center">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g clipPath="url(#clip0_271_265)">
-                <path d="M10.2201 4.75678L7.26892 6.20938C5.43504 7.11203 3.34137 6.35712 2.43872 4.52319L2.28418 4.20923L5.11059 2.75663C6.94448 1.85398 9.1629 2.60889 10.0655 4.44282L10.2201 4.75678Z" stroke="var(--primary)" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path>
-                <path d="M10.2202 4.75609V3.63537C10.2202 2.22374 11.152 0.981554 12.5072 0.586426" stroke="var(--primary)" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path>
-                <circle cx="13.2289" cy="14.7057" r="0.586417" fill="var(--primary)"></circle>
-                <circle cx="11.3483" cy="15.9028" r="0.586417" fill="var(--primary)"></circle>
-                <path d="M4.55515 6.4092C3.23681 7.78575 2.38721 9.69267 2.38721 11.7492C2.38721 15.9821 5.81865 19.4136 10.0515 19.4136C14.2969 19.4136 17.7159 15.9946 17.7159 11.7492C17.7159 7.58238 14.3907 4.19219 10.249 4.08741C10.1265 4.08433 10.0039 4.09273 9.88307 4.11263" stroke="var(--primary)" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"></path>
-              </g>
-              <defs>
-                <clipPath id="clip0_271_2655">
-                  <rect width="20" height="20" fill="white"></rect>
-                </clipPath>
-              </defs>
-            </svg>Our Services
-          </span>
-          <h2 className="2xxl:text-5xxl lg:text-[38px] sm:text-[32px] text-2xxl font-bold capitalize mb-0">
-            Real Transformations
-          </h2>
-          <p className="text-primary font-medium mt-2">See how Fuel Plate by MMC changes lives.</p>
+    <section className="compare2-root">
+      <style>{`
+        .compare2-root {
+          background: #fff;
+          padding: 120px 0;
+          font-family: 'Inter', sans-serif;
+          position: relative;
+          overflow: hidden;
+        }
+        .compare2-container {
+          max-width: 1400px; margin: 0 auto; padding: 0 40px;
+        }
+        @media (max-width: 768px) { .compare2-container { padding: 0 24px; } }
+
+        .compare2-head {
+          text-align: center; max-width: 700px; margin: 0 auto 80px;
+        }
+        .compare2-eyebrow {
+          display: inline-flex; align-items: center; gap: 8px;
+          background: rgba(255,100,0,0.08); border: 1px solid rgba(255,100,0,0.2);
+          border-radius: 100px; padding: 6px 16px; margin-bottom: 24px;
+        }
+        .compare2-eyebrow span {
+          font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #ff6400;
+        }
+
+        .compare2-title {
+          font-family: 'Montserrat', sans-serif; font-size: clamp(32px, 5vw, 48px);
+          font-weight: 950; color: #111; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px;
+        }
+        .compare2-subtitle { font-size: 18px; color: #666; font-weight: 500; }
+
+        .compare2-slider-wrap { position: relative; padding: 0 100px; }
+        @media (max-width: 1024px) { .compare2-slider-wrap { padding: 0; } }
+
+        .compare2-card {
+          border-radius: 32px; overflow: hidden; position: relative;
+          transition: transform 0.5s ease;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+          background: #eee;
+        }
+        .compare2-card img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; }
+        
+        .compare2-badge {
+          position: absolute; top: 20px; left: 20px;
+          background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+          padding: 8px 16px; border-radius: 100px;
+          font-size: 12px; font-weight: 700; color: #111;
+          display: flex; align-items: center; gap: 6px;
+        }
+
+        .compare2-nav {
+          position: absolute; top: 50%; transform: translateY(-50%);
+          width: 60px; height: 60px; border-radius: 50%;
+          background: #fff; border: 1px solid #eee;
+          display: flex; align-items: center; justify-content: center;
+          color: #111; cursor: pointer; transition: all 0.3s; z-index: 10;
+        }
+        .compare2-nav:hover { background: #ff6400; border-color: #ff6400; color: #fff; transform: translateY(-50%) scale(1.1); }
+        .compare2-prev { left: 0; }
+        .compare2-next { right: 0; }
+        @media (max-width: 1024px) { .compare2-nav { display: none; } }
+
+        .compare2-pagination { margin-top: 60px; display: flex; justify-content: center; gap: 8px; }
+        .swiper-pagination-bullet { width: 40px; height: 4px; border-radius: 2px; background: #eee; opacity: 1; margin: 0 !important; }
+        .swiper-pagination-bullet-active { background: #ff6400; width: 60px; }
+      `}</style>
+
+      <div className="compare2-container">
+        <div className="compare2-head">
+          <div className="compare2-eyebrow">
+            <Sparkles size={14} color="#ff6400" />
+            <span>Success Stories</span>
+          </div>
+          <h2 className="compare2-title">Real People.<br />Real Results.</h2>
+          <p className="compare2-subtitle">Witness the power of performance nutrition through our clients’ journeys.</p>
+        </div>
+
+        <div className="compare2-slider-wrap">
+          <div className="compare2-nav compare2-prev"><ArrowLeft size={20} /></div>
+          <div className="compare2-nav compare2-next"><ArrowRight size={20} /></div>
+
+          <Swiper
+            modules={[Autoplay, Navigation, Pagination]}
+            loop={true}
+            spaceBetween={32}
+            slidesPerView={1}
+            autoplay={{ delay: 4000 }}
+            navigation={{ nextEl: '.compare2-next', prevEl: '.compare2-prev' }}
+            pagination={{ clickable: true, el: '.compare2-pagination' }}
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+          >
+            {[
+              'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=100&w=800',
+              'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=100&w=800',
+              'https://images.unsplash.com/photo-1549476464-37392f717541?auto=format&fit=crop&q=100&w=800'
+            ].map((imgUrl, index) => (
+              <SwiperSlide key={index}>
+                <div className="compare2-card">
+                  <div className="compare2-badge">
+                    <div className="size-2 rounded-full bg-green-500 animate-pulse" />
+                    Fuel Plate Result
+                  </div>
+                  <img src={imgUrl} alt={`Transformation ${index + 1}`} />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          <div className="compare2-pagination" />
         </div>
       </div>
-
-      <Swiper
-        modules={[Autoplay, Navigation, Pagination]}
-        loop={true}
-        spaceBetween={20}
-        slidesPerView={1}
-        centeredSlides={true}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
-        pagination={{
-          type: "progressbar",
-          el: ".compare-pagination-swiper",
-        }}
-        breakpoints={{
-          640: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-          1480: { slidesPerView: 3.5 }
-        }}
-        className="compare-swiper-2 compare-swiper-wrapper mb-3.75"
-      >
-        {[1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3].map((imgNum, index) => (
-          <SwiperSlide key={index} className="wow fadeInUp" data-wow-delay={`${(index % 3 + 1) * 0.1}s`}>
-            <div className="relative overflow-hidden sm:rounded-3xl rounded-xxl shadow-lg">
-              <img src={`/images/compare/img${imgNum}.webp`} alt={`Transformation ${index + 1}`} className="w-full object-cover aspect-[4/5]" />
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
     </section>
   );
 };

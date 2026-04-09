@@ -4,44 +4,44 @@ import React, { useState } from 'react';
 import { Play, ArrowRight, Activity } from 'lucide-react';
 
 const BmiCalculator = () => {
-    const [unit, setUnit] = useState<'metric' | 'imperial'>('metric');
-    const [weight, setWeight] = useState('');
-    const [heightCm, setHeightCm] = useState('');
-    const [heightFt, setHeightFt] = useState('');
-    const [heightIn, setHeightIn] = useState('');
-    const [weightLbs, setWeightLbs] = useState('');
-    const [result, setResult] = useState<number | null>(null);
+  const [unit, setUnit] = useState<'metric' | 'imperial'>('metric');
+  const [weight, setWeight] = useState('');
+  const [heightCm, setHeightCm] = useState('');
+  const [heightFt, setHeightFt] = useState('');
+  const [heightIn, setHeightIn] = useState('');
+  const [weightLbs, setWeightLbs] = useState('');
+  const [result, setResult] = useState<number | null>(null);
 
-    const getBmiCategory = (bmi: number) => {
-        if (bmi < 18.5) return { label: 'Underweight', color: '#3b82f6' };
-        if (bmi < 25) return { label: 'Normal', color: '#16a34a' };
-        if (bmi < 30) return { label: 'Overweight', color: '#ea580c' };
-        return { label: 'Obese', color: '#dc2626' };
-    };
+  const getBmiCategory = (bmi: number) => {
+    if (bmi < 18.5) return { label: 'Underweight', color: '#3b82f6' };
+    if (bmi < 25) return { label: 'Normal', color: '#16a34a' };
+    if (bmi < 30) return { label: 'Overweight', color: '#ea580c' };
+    return { label: 'Obese', color: '#dc2626' };
+  };
 
-    const getBmiPercent = (bmi: number) => Math.min(Math.max(((bmi - 10) / 30) * 100, 0), 100);
+  const getBmiPercent = (bmi: number) => Math.min(Math.max(((bmi - 10) / 30) * 100, 0), 100);
 
-    const calculateBMI = (e: React.FormEvent) => {
-        e.preventDefault();
-        let bmi: number | null = null;
-        if (unit === 'metric') {
-            const h = parseFloat(heightCm) / 100;
-            const w = parseFloat(weight);
-            if (h > 0 && w > 0) bmi = w / (h * h);
-        } else {
-            const totalInches = parseFloat(heightFt) * 12 + parseFloat(heightIn || '0');
-            const w = parseFloat(weightLbs);
-            if (totalInches > 0 && w > 0) bmi = (w / (totalInches * totalInches)) * 703;
-        }
-        if (bmi) setResult(parseFloat(bmi.toFixed(1)));
-    };
+  const calculateBMI = (e: React.FormEvent) => {
+    e.preventDefault();
+    let bmi: number | null = null;
+    if (unit === 'metric') {
+      const h = parseFloat(heightCm) / 100;
+      const w = parseFloat(weight);
+      if (h > 0 && w > 0) bmi = w / (h * h);
+    } else {
+      const totalInches = parseFloat(heightFt) * 12 + parseFloat(heightIn || '0');
+      const w = parseFloat(weightLbs);
+      if (totalInches > 0 && w > 0) bmi = (w / (totalInches * totalInches)) * 703;
+    }
+    if (bmi) setResult(parseFloat(bmi.toFixed(1)));
+  };
 
-    const category = result ? getBmiCategory(result) : null;
-    const pct = result ? getBmiPercent(result) : 0;
+  const category = result ? getBmiCategory(result) : null;
+  const pct = result ? getBmiPercent(result) : 0;
 
-    return (
-        <>
-            <style>{`
+  return (
+    <>
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
 
         /* ══════════════════════════════════════
@@ -107,14 +107,14 @@ const BmiCalculator = () => {
         .bmi-media:hover .bmi-media-img { transform: scale(1.03); }
 
         /* right-edge gradient bleeds into light form panel */
-        .bmi-media::after {
-          content: '';
-          position: absolute; top: 0; right: 0;
-          width: 200px; height: 100%;
-          background: linear-gradient(to right, transparent, #f5f3f0);
-          pointer-events: none;
-        }
-        @media (max-width: 1024px) { .bmi-media::after { display: none; } }
+        // .bmi-media::after {
+        //   content: '';
+        //   position: absolute; top: 0; right: 0;
+        //   width: 200px; height: 100%;
+        //   background: linear-gradient(to right, transparent, #f5f3f0);
+        //   pointer-events: none;
+        // }
+        // @media (max-width: 1024px) { .bmi-media::after { display: none; } }
 
         /* play button – white with orange icon */
         .bmi-play-btn {
@@ -343,146 +343,146 @@ const BmiCalculator = () => {
         }
       `}</style>
 
-            <section className="bmi-section">
-                <div className="bmi-glow-left" />
-                <div className="bmi-glow-right" />
-                <div className="bmi-grain" />
+      <section className="bmi-section">
+        <div className="bmi-glow-left" />
+        <div className="bmi-glow-right" />
+        <div className="bmi-grain" />
 
-                <div className="bmi-layout">
-                    {/* ── LEFT: video/image ── */}
-                    <div className="bmi-media">
-                        <img src="images/background/img.png" alt="BMI visual" className="bmi-media-img" />
+        <div className="bmi-layout">
+          {/* ── LEFT: video/image ── */}
+          <div className="bmi-media">
+            <img src="images/background/img.png" alt="BMI visual" className="bmi-media-img" />
 
-                        <button
-                            className="bmi-play-btn"
-                            data-type="youtube"
-                            data-src="https://www.youtube.com/embed/o8OgzQdA70c"
-                        >
-                            <Play fill="currentColor" size={22} />
-                        </button>
+            <button
+              className="bmi-play-btn"
+              data-type="youtube"
+              data-src="https://www.youtube.com/embed/o8OgzQdA70c"
+            >
+              <Play fill="currentColor" size={22} />
+            </button>
 
-                        <div className="bmi-media-label">
-                            <div className="bmi-media-label-dot" />
-                            <span className="bmi-media-label-text">Watch How It Works</span>
-                        </div>
+            <div className="bmi-media-label">
+              <div className="bmi-media-label-dot" />
+              <span className="bmi-media-label-text">Watch How It Works</span>
+            </div>
+          </div>
+
+          {/* ── RIGHT: form ── */}
+          <div className="bmi-form-panel">
+            <div className="bmi-eyebrow">
+              <div className="bmi-eyebrow-dot" />
+              <span className="bmi-eyebrow-text">BMI Calculator</span>
+            </div>
+
+            <h2 className="bmi-title">
+              Calculate Your<br /><em>Body Mass</em><br />Index
+            </h2>
+
+            <div className="bmi-toggle">
+              <button
+                className={`bmi-toggle-btn${unit === 'metric' ? ' active' : ''}`}
+                onClick={() => { setUnit('metric'); setResult(null); }}
+                type="button"
+              >Metric</button>
+              <button
+                className={`bmi-toggle-btn${unit === 'imperial' ? ' active' : ''}`}
+                onClick={() => { setUnit('imperial'); setResult(null); }}
+                type="button"
+              >Imperial</button>
+            </div>
+
+            <form onSubmit={calculateBMI}>
+              {unit === 'metric' ? (
+                <>
+                  <div className="bmi-field">
+                    <span className="bmi-field-label">CM</span>
+                    <input
+                      type="number" placeholder="Height"
+                      value={heightCm} onChange={e => setHeightCm(e.target.value)}
+                      className="bmi-input" min="50" max="300" required
+                    />
+                  </div>
+                  <div className="bmi-field">
+                    <span className="bmi-field-label">KG</span>
+                    <input
+                      type="number" placeholder="Weight"
+                      value={weight} onChange={e => setWeight(e.target.value)}
+                      className="bmi-input" min="10" max="300" required
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bmi-dual-field">
+                    <div className="bmi-field" style={{ marginBottom: 0 }}>
+                      <span className="bmi-field-label">FT</span>
+                      <input
+                        type="number" placeholder="Feet"
+                        value={heightFt} onChange={e => setHeightFt(e.target.value)}
+                        className="bmi-input" min="1" max="9" required
+                      />
                     </div>
-
-                    {/* ── RIGHT: form ── */}
-                    <div className="bmi-form-panel">
-                        <div className="bmi-eyebrow">
-                            <div className="bmi-eyebrow-dot" />
-                            <span className="bmi-eyebrow-text">BMI Calculator</span>
-                        </div>
-
-                        <h2 className="bmi-title">
-                            Calculate Your<br /><em>Body Mass</em><br />Index
-                        </h2>
-
-                        <div className="bmi-toggle">
-                            <button
-                                className={`bmi-toggle-btn${unit === 'metric' ? ' active' : ''}`}
-                                onClick={() => { setUnit('metric'); setResult(null); }}
-                                type="button"
-                            >Metric</button>
-                            <button
-                                className={`bmi-toggle-btn${unit === 'imperial' ? ' active' : ''}`}
-                                onClick={() => { setUnit('imperial'); setResult(null); }}
-                                type="button"
-                            >Imperial</button>
-                        </div>
-
-                        <form onSubmit={calculateBMI}>
-                            {unit === 'metric' ? (
-                                <>
-                                    <div className="bmi-field">
-                                        <span className="bmi-field-label">CM</span>
-                                        <input
-                                            type="number" placeholder="Height"
-                                            value={heightCm} onChange={e => setHeightCm(e.target.value)}
-                                            className="bmi-input" min="50" max="300" required
-                                        />
-                                    </div>
-                                    <div className="bmi-field">
-                                        <span className="bmi-field-label">KG</span>
-                                        <input
-                                            type="number" placeholder="Weight"
-                                            value={weight} onChange={e => setWeight(e.target.value)}
-                                            className="bmi-input" min="10" max="300" required
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="bmi-dual-field">
-                                        <div className="bmi-field" style={{ marginBottom: 0 }}>
-                                            <span className="bmi-field-label">FT</span>
-                                            <input
-                                                type="number" placeholder="Feet"
-                                                value={heightFt} onChange={e => setHeightFt(e.target.value)}
-                                                className="bmi-input" min="1" max="9" required
-                                            />
-                                        </div>
-                                        <div className="bmi-field" style={{ marginBottom: 0 }}>
-                                            <span className="bmi-field-label">IN</span>
-                                            <input
-                                                type="number" placeholder="Inches"
-                                                value={heightIn} onChange={e => setHeightIn(e.target.value)}
-                                                className="bmi-input" min="0" max="11"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="bmi-field" style={{ marginTop: 16 }}>
-                                        <span className="bmi-field-label">LBS</span>
-                                        <input
-                                            type="number" placeholder="Weight"
-                                            value={weightLbs} onChange={e => setWeightLbs(e.target.value)}
-                                            className="bmi-input" min="22" max="660" required
-                                        />
-                                    </div>
-                                </>
-                            )}
-
-                            <button type="submit" className="bmi-submit">
-                                Calculate BMI
-                                <span className="bmi-submit-icon">
-                                    <ArrowRight size={16} />
-                                </span>
-                            </button>
-                        </form>
-
-                        {result && category && (
-                            <div className="bmi-result">
-                                <div className="bmi-result-top">
-                                    <div>
-                                        <div className="bmi-result-label">
-                                            <Activity size={12} /> Your BMI Score
-                                        </div>
-                                        <div className="bmi-result-value">{result}</div>
-                                    </div>
-                                    <div
-                                        className="bmi-result-category"
-                                        style={{
-                                            background: `${category.color}15`,
-                                            color: category.color,
-                                            border: `1.5px solid ${category.color}30`,
-                                        }}
-                                    >
-                                        {category.label}
-                                    </div>
-                                </div>
-                                <div className="bmi-bar-bg">
-                                    <div
-                                        className="bmi-bar-fill"
-                                        style={{ width: `${pct}%`, background: category.color }}
-                                    />
-                                </div>
-                            </div>
-                        )}
+                    <div className="bmi-field" style={{ marginBottom: 0 }}>
+                      <span className="bmi-field-label">IN</span>
+                      <input
+                        type="number" placeholder="Inches"
+                        value={heightIn} onChange={e => setHeightIn(e.target.value)}
+                        className="bmi-input" min="0" max="11"
+                      />
                     </div>
+                  </div>
+                  <div className="bmi-field" style={{ marginTop: 16 }}>
+                    <span className="bmi-field-label">LBS</span>
+                    <input
+                      type="number" placeholder="Weight"
+                      value={weightLbs} onChange={e => setWeightLbs(e.target.value)}
+                      className="bmi-input" min="22" max="660" required
+                    />
+                  </div>
+                </>
+              )}
+
+              <button type="submit" className="bmi-submit">
+                Calculate BMI
+                <span className="bmi-submit-icon">
+                  <ArrowRight size={16} />
+                </span>
+              </button>
+            </form>
+
+            {result && category && (
+              <div className="bmi-result">
+                <div className="bmi-result-top">
+                  <div>
+                    <div className="bmi-result-label">
+                      <Activity size={12} /> Your BMI Score
+                    </div>
+                    <div className="bmi-result-value">{result}</div>
+                  </div>
+                  <div
+                    className="bmi-result-category"
+                    style={{
+                      background: `${category.color}15`,
+                      color: category.color,
+                      border: `1.5px solid ${category.color}30`,
+                    }}
+                  >
+                    {category.label}
+                  </div>
                 </div>
-            </section>
-        </>
-    );
+                <div className="bmi-bar-bg">
+                  <div
+                    className="bmi-bar-fill"
+                    style={{ width: `${pct}%`, background: category.color }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
+  );
 };
 
 export default BmiCalculator;

@@ -3,676 +3,765 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
-import { Check, X, Plus, Zap, Flame, Dumbbell, Beef, Salad, Drumstick, UtensilsCrossed } from 'lucide-react';
+import { Check, X, Plus, Zap, Flame, Dumbbell, Beef, ChevronRight } from 'lucide-react';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-/* ── Macro icon pill ─────────────────────────────────────── */
 const MacroPill = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
-    <div className="macro-pill">
-        <div className="macro-pill-icon">{icon}</div>
-        <div>
-            <div className="macro-pill-value">{value}</div>
-            <div className="macro-pill-label">{label}</div>
-        </div>
-    </div>
+  <div className="mpill">
+    <div className="mpill-icon">{icon}</div>
+    <div className="mpill-value">{value}</div>
+    <div className="mpill-label">{label}</div>
+  </div>
 );
 
 const PricingSection = () => {
-    const [vegMode, setVegMode] = useState<Record<number, 'veg' | 'nonveg'>>({});
+  const [vegMode, setVegMode] = useState<Record<number, 'veg' | 'nonveg'>>({});
+  const toggle = (i: number, mode: 'veg' | 'nonveg') =>
+    setVegMode(prev => ({ ...prev, [i]: mode }));
+  const isNonVeg = (i: number) => vegMode[i] === 'nonveg';
 
-    const toggle = (i: number) =>
-        setVegMode(prev => ({ ...prev, [i]: prev[i] === 'nonveg' ? 'veg' : 'nonveg' }));
+  const plans = [
+    {
+      id: 0, emoji: '💚', title: 'VEG TIFFIN', tag: 'Home Style',
+      desc: 'Mon – Fri · 20 Meals / Month', vegPrice: '$250', nonvegPrice: null,
+      features: ['2 Veg Sabzi', '8 Rotis', 'Simple home-style meals'],
+      noItems: [], isFuel: false, highlight: false, image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=100&w=800',
+    },
+    {
+      id: 1, emoji: '🍗', title: 'NON-VEG TIFFIN', tag: 'Classic',
+      desc: 'Mon – Fri · 20 Meals / Month', vegPrice: null, nonvegPrice: '$280',
+      features: ['1 Veg Sabzi', '1 Chicken Sabzi', '8 Rotis'],
+      noItems: [], isFuel: false, highlight: false, image: 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&q=100&w=800',
+    },
+    {
+      id: 2, emoji: '🍚', title: 'RICE & ROTI COMBO', tag: 'Combo',
+      desc: '1 Meal Per Day', vegPrice: '$330', nonvegPrice: '$350',
+      features: ['1 Rice Bowl (Veg or Chicken)', '1 Veg Sabzi', '4 Rotis'],
+      noItems: [], isFuel: false, highlight: false, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=100&w=800',
+    },
+    {
+      id: 3, emoji: '⚡', title: 'FUEL START', tag: 'Balanced',
+      desc: 'Balanced Nutrition · 2 Meals / Day', vegPrice: '$309', nonvegPrice: '$319',
+      macros: { protein: '110g', carbs: '180g', fat: '45g', cal: '1,550' },
+      features: ['Rice or Quinoa bowls', 'Eggs (whole + whites)', 'Fresh salad', 'Yogurt & seasonal fruit'],
+      noItems: [], isFuel: true, highlight: false, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=100&w=800',
+    },
+    {
+      id: 4, emoji: '🔥', title: 'FUEL LEAN', tag: 'Fat Loss',
+      desc: 'Fat Loss · 3 Meals / Day', vegPrice: '$349', nonvegPrice: '$359',
+      macros: { protein: '140g', carbs: '120g', fat: '40g', cal: '1,400' },
+      features: ['Lean protein bowls', 'High-protein salads', 'Yogurt bowl', 'Nuts on select days', 'Controlled carbs'],
+      noItems: [], isFuel: true, highlight: false, image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=100&w=800',
+    },
+    {
+      id: 5, emoji: '💪', title: 'FUEL MAX', tag: 'Most Popular',
+      desc: 'Muscle Gain · 3 Meals + Protein Boost', vegPrice: '$389', nonvegPrice: '$399',
+      macros: { protein: '180g', carbs: '220g', fat: '55g', cal: '2,100' },
+      features: ['High-protein bowls', 'Fish on select days', 'Daily egg-white boost', 'Protein salads', 'Yogurt & nuts (select days)'],
+      noItems: [], isFuel: true, highlight: true, image: 'https://images.unsplash.com/photo-1551248429-40975aa4de74?auto=format&fit=crop&q=100&w=800',
+    },
+    {
+      id: 6, emoji: '🥩', title: 'FUEL ZERO', tag: 'Zero Carb Elite',
+      desc: 'Zero-Carb · 3 Meals / Day', vegPrice: '$519', nonvegPrice: '$549',
+      macros: { protein: '200g', carbs: '0g', fat: '70g', cal: '1,800' },
+      features: ['Paneer / Chicken thigh plates', 'Fish on select days', '3 whole eggs + whites daily', 'Leafy salads & healthy fats'],
+      noItems: ['No Rice', 'No Roti', 'No Fruit', 'No Sugar', 'No Nuts'],
+      isFuel: true, highlight: true, image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&q=100&w=800',
+    },
+  ];
 
-    const isNonVeg = (i: number) => vegMode[i] === 'nonveg';
+  const addons = [
+    { emoji: '🐟', label: 'Fish Upgrade', detail: 'Start +$30 · Lean +$40 · Max +$50 · Zero +$50' },
+    { emoji: '🥤', label: 'Whey Protein', detail: '$3 / serving · $55 / month' },
+    { emoji: '🥚', label: 'Extra Egg Whites', detail: '+$20 / month' },
+    { emoji: '🧀', label: 'Extra Paneer / Protein', detail: '+$25 / month' },
+  ];
 
-    /* ── Plan data ── */
-    const plans = [
-        {
-            id: 0,
-            emoji: '💚',
-            title: 'VEG TIFFIN',
-            tag: 'Home Style',
-            desc: 'Mon – Fri · 20 Meals / Month',
-            vegPrice: '$250',
-            nonvegPrice: null,
-            features: ['2 Veg Sabzi', '8 Rotis', 'Simple home-style meals'],
-            noItems: [],
-            isFuel: false,
-            highlight: false,
-            image: '/images/services/img1.webp',
-        },
-        {
-            id: 1,
-            emoji: '🍗',
-            title: 'NON-VEG TIFFIN',
-            tag: 'Classic',
-            desc: 'Mon – Fri · 20 Meals / Month',
-            vegPrice: null,
-            nonvegPrice: '$280',
-            features: ['1 Veg Sabzi', '1 Chicken Sabzi', '8 Rotis'],
-            noItems: [],
-            isFuel: false,
-            highlight: false,
-            image: '/images/services/img2.webp',
-        },
-        {
-            id: 2,
-            emoji: '🍚',
-            title: 'RICE & ROTI COMBO',
-            tag: 'Combo',
-            desc: '1 Meal Per Day',
-            vegPrice: '$330',
-            nonvegPrice: '$350',
-            features: ['1 Rice Bowl (Veg or Chicken)', '1 Veg Sabzi', '4 Rotis'],
-            noItems: [],
-            isFuel: false,
-            highlight: false,
-            image: '/images/services/img3.webp',
-        },
-        {
-            id: 3,
-            emoji: '⚡',
-            title: 'FUEL START',
-            tag: 'Balanced',
-            desc: 'Balanced Nutrition · 2 Meals / Day',
-            vegPrice: '$309',
-            nonvegPrice: '$319',
-            macros: { protein: '110g', carbs: '180g', fat: '45g', cal: '1,550' },
-            features: ['Rice or Quinoa bowls', 'Eggs (whole + whites)', 'Fresh salad', 'Yogurt & seasonal fruit'],
-            noItems: [],
-            isFuel: true,
-            highlight: false,
-            image: '/images/services/img4.webp',
-        },
-        {
-            id: 4,
-            emoji: '🔥',
-            title: 'FUEL LEAN',
-            tag: 'Fat Loss',
-            desc: 'Fat Loss · 3 Meals / Day',
-            vegPrice: '$349',
-            nonvegPrice: '$359',
-            macros: { protein: '140g', carbs: '120g', fat: '40g', cal: '1,400' },
-            features: ['Lean protein bowls', 'High-protein salads', 'Yogurt bowl', 'Nuts on select days', 'Controlled carbs'],
-            noItems: [],
-            isFuel: true,
-            highlight: false,
-            image: '/images/services/img1.webp',
-        },
-        {
-            id: 5,
-            emoji: '💪',
-            title: 'FUEL MAX',
-            tag: 'Most Popular',
-            desc: 'Muscle Gain · 3 Meals + Protein Boost',
-            vegPrice: '$389',
-            nonvegPrice: '$399',
-            macros: { protein: '180g', carbs: '220g', fat: '55g', cal: '2,100' },
-            features: ['High-protein bowls', 'Fish on select days', 'Daily egg-white boost', 'Protein salads', 'Yogurt & nuts (select days)'],
-            noItems: [],
-            isFuel: true,
-            highlight: true,   // ← FUEL MAX highlighted
-            image: '/images/services/img2.webp',
-        },
-        {
-            id: 6,
-            emoji: '🥩',
-            title: 'FUEL ZERO',
-            tag: 'Zero Carb Elite',
-            desc: 'Zero-Carb · 3 Meals / Day',
-            vegPrice: '$519',
-            nonvegPrice: '$549',
-            macros: { protein: '200g', carbs: '0g', fat: '70g', cal: '1,800' },
-            features: ['Paneer / Chicken thigh plates', 'Fish on select days', '3 whole eggs + whites daily', 'Leafy salads & healthy fats'],
-            noItems: ['No Rice', 'No Roti', 'No Fruit', 'No Sugar', 'No Nuts'],
-            isFuel: true,
-            highlight: true,   // ← FUEL ZERO highlighted
-            image: '/images/services/img3.webp',
-        },
-    ];
+  const whyPoints = [
+    { icon: '✔', text: 'Fresh · Chef-made meals' },
+    { icon: '✔', text: 'Veg & Non-Veg options' },
+    { icon: '✔', text: 'Gym-approved plans' },
+    { icon: '✔', text: 'Easy upgrades as you progress' },
+  ];
 
-    const addons = [
-        { emoji: '🐟', label: 'Fish Upgrade', detail: 'Start +$30 · Lean +$40 · Max +$50 · Zero +$50' },
-        { emoji: '🥤', label: 'Whey Protein', detail: '$3 / serving · $55 / month' },
-        { emoji: '🥚', label: 'Extra Egg Whites', detail: '+$20 / month' },
-        { emoji: '🧀', label: 'Extra Paneer / Protein', detail: '+$25 / month' },
-    ];
+  return (
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
-    const whyPoints = [
-        'Fresh · Chef-made meals',
-        'Veg & Non-Veg options',
-        'Gym-approved plans',
-        'Easy upgrades as you progress',
-    ];
-
-    return (
-        <>
-            <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
-
-        /* ── Section shell ── */
-        .prc-section {
-          background: #0a0a0a;
+        /* ── Section ── */
+        .prc2-section {
+          background: #fafaf8;
           position: relative;
           overflow: hidden;
           padding: 100px 0 80px;
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Inter', sans-serif;
         }
-        .prc-section::before {
-          content: '';
-          position: absolute; top: 0; left: 0; right: 0; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(var(--primary-rgb,255,100,0),.45), transparent);
-        }
-        .prc-glow-tl {
-          position: absolute; top: -180px; left: -100px;
-          width: 600px; height: 500px;
-          background: radial-gradient(circle, rgba(var(--primary-rgb,255,100,0),.09) 0%, transparent 70%);
+
+        /* Geometric SVG bg */
+        .prc2-bg-svg {
+          position: absolute;
+          inset: 0;
           pointer-events: none;
+          z-index: 0;
+          overflow: hidden;
         }
-        .prc-glow-br {
-          position: absolute; bottom: -200px; right: -120px;
-          width: 550px; height: 450px;
-          background: radial-gradient(circle, rgba(var(--primary-rgb,255,100,0),.07) 0%, transparent 70%);
-          pointer-events: none;
+
+        /* Warm glow blobs */
+        .prc2-glow-tl {
+          position: absolute; top: -200px; left: -120px;
+          width: 560px; height: 480px;
+          background: radial-gradient(ellipse, rgba(255,100,0,0.07) 0%, transparent 70%);
+          pointer-events: none; z-index: 0;
         }
-        .prc-grain {
+        .prc2-glow-br {
+          position: absolute; bottom: -180px; right: -100px;
+          width: 480px; height: 420px;
+          background: radial-gradient(ellipse, rgba(255,100,0,0.05) 0%, transparent 70%);
+          pointer-events: none; z-index: 0;
+        }
+
+        /* Fine dot texture */
+        .prc2-dots {
           position: absolute; inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-          pointer-events: none; opacity: .5;
+          background-image: radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px);
+          background-size: 28px 28px;
+          pointer-events: none; z-index: 0;
         }
-        .prc-container {
+
+        .prc2-container {
           position: relative; z-index: 1;
-          max-width: 1280px; margin: 0 auto; padding: 0 24px;
+          max-width: 1300px; margin: 0 auto; padding: 0 28px;
         }
 
         /* ── Header ── */
-        .prc-header {
+        .prc2-header {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 48px;
+          gap: 56px;
           align-items: end;
-          margin-bottom: 60px;
+          margin-bottom: 64px;
         }
-        @media (max-width: 768px) { .prc-header { grid-template-columns: 1fr; gap: 24px; } }
+        @media (max-width: 768px) { .prc2-header { grid-template-columns: 1fr; gap: 24px; } }
 
-        .prc-eyebrow {
+        .prc2-eyebrow {
           display: inline-flex; align-items: center; gap: 8px;
-          background: rgba(var(--primary-rgb,255,100,0),.1);
-          border: 1px solid rgba(var(--primary-rgb,255,100,0),.25);
-          border-radius: 100px; padding: 6px 18px 6px 10px; margin-bottom: 20px;
+          background: rgba(255,100,0,0.08);
+          border: 1.5px solid rgba(255,100,0,0.2);
+          border-radius: 100px; padding: 6px 18px 6px 10px;
+          margin-bottom: 20px;
         }
-        .prc-eyebrow-dot {
+        .prc2-eyebrow-dot {
           width: 8px; height: 8px; border-radius: 50%;
-          background: var(--primary,#ff6400);
-          animation: prc-pulse 2s ease-in-out infinite;
+          background: #ff6400;
+          animation: prc2-pulse 2s ease-in-out infinite;
         }
-        @keyframes prc-pulse {
+        @keyframes prc2-pulse {
           0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}
         }
-        .prc-eyebrow-text {
-          font-size: 12px; font-weight: 600;
-          letter-spacing: 2px; text-transform: uppercase;
-          color: var(--primary,#ff6400);
+        .prc2-eyebrow-text {
+          font-size: 11px; font-weight: 700;
+          letter-spacing: 2.5px; text-transform: uppercase;
+          color: #ff6400; font-family: 'Inter', sans-serif;
         }
-        .prc-heading {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(42px, 5vw, 68px);
-          color: #fff; line-height: .95; letter-spacing: 1px; margin: 0;
-        }
-        .prc-heading em { font-style: normal; color: var(--primary,#ff6400); }
 
-        .prc-header-right {
-          display: flex; flex-direction: column; gap: 20px; align-items: flex-start;
+        .prc2-heading {
+          font-family: 'Montserrat', sans-serif;
+          font-size: clamp(36px, 4.5vw, 60px);
+          font-weight: 900;
+          color: #111; line-height: 1.05; letter-spacing: -1px; margin: 0;
         }
-        .prc-subtext {
-          font-size: 15px; color: rgba(255,255,255,.4);
-          font-weight: 300; line-height: 1.75; margin: 0;
+        .prc2-heading em {
+          font-style: normal; color: #ff6400;
+          position: relative;
         }
-        .prc-why {
-          display: flex; flex-wrap: wrap; gap: 8px;
+        .prc2-heading em::after {
+          content: '';
+          position: absolute;
+          bottom: -4px; left: 0; right: 0; height: 3px;
+          background: #ff6400;
+          border-radius: 2px;
+          opacity: 0.35;
         }
-        .prc-why-pill {
-          display: inline-flex; align-items: center; gap: 6px;
-          background: rgba(255,255,255,.04);
-          border: 1px solid rgba(255,255,255,.08);
-          border-radius: 100px; padding: 6px 14px;
-          font-size: 12px; font-weight: 500;
-          color: rgba(255,255,255,.6);
+
+        .prc2-header-right {
+          display: flex; flex-direction: column; gap: 24px; align-items: flex-start;
         }
-        .prc-why-check {
-          width: 16px; height: 16px; border-radius: 50%;
-          background: rgba(var(--primary-rgb,255,100,0),.2);
+        .prc2-subtext {
+          font-size: 15px; color: #666;
+          font-weight: 400; line-height: 1.8; margin: 0;
+        }
+        .prc2-why-grid {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;
+        }
+        .prc2-why-item {
+          display: flex; align-items: center; gap: 10px;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 12px; padding: 10px 14px;
+          font-size: 12.5px; font-weight: 500; color: #444;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .prc2-why-check {
+          width: 18px; height: 18px; border-radius: 50%;
+          background: rgba(255,100,0,0.1);
+          border: 1.5px solid rgba(255,100,0,0.25);
           display: flex; align-items: center; justify-content: center;
-          color: var(--primary,#ff6400); flex-shrink: 0;
+          color: #ff6400; flex-shrink: 0;
+          font-size: 9px; font-weight: 800;
         }
 
-        /* ── Swiper wrapper ── */
-        .prc-swiper-wrap { position: relative; }
-        .prc-swiper .swiper-slide { height: auto; }
+        /* ── Swiper ── */
+        .prc2-swiper-wrap { position: relative; }
+        .prc2-swiper .swiper-slide { height: auto; }
 
         /* ── Card ── */
-        .prc-card {
+        .prc2-card {
           position: relative;
-          background: #141414;
-          border: 1px solid rgba(255,255,255,.07);
-          border-radius: 20px;
+          background: #fff;
+          border: 1.5px solid rgba(0,0,0,0.07);
+          border-radius: 24px;
           overflow: hidden;
           display: flex; flex-direction: column;
           height: 100%;
           transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
         }
-        .prc-card:hover {
-          transform: translateY(-5px);
-          border-color: rgba(var(--primary-rgb,255,100,0),.3);
-          box-shadow: 0 24px 60px rgba(0,0,0,.45);
+        .prc2-card:hover {
+          transform: translateY(-6px);
+          border-color: rgba(255,100,0,0.25);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,100,0,0.1);
         }
-        /* FUEL MAX / FUEL ZERO glow */
-        .prc-card.is-highlight {
-          border-color: rgba(var(--primary-rgb,255,100,0),.4);
-          box-shadow: 0 0 0 1px rgba(var(--primary-rgb,255,100,0),.18),
-                      0 20px 60px rgba(0,0,0,.5);
+        .prc2-card.is-highlight {
+          border-color: #ff6400;
+          box-shadow: 0 8px 40px rgba(255,100,0,0.18), 0 0 0 1px rgba(255,100,0,0.2);
+        }
+        .prc2-card.is-highlight:hover {
+          box-shadow: 0 24px 64px rgba(255,100,0,0.25), 0 0 0 2px rgba(255,100,0,0.3);
         }
 
-        /* food image strip */
-        .prc-card-img {
-          position: relative; height: 140px; overflow: hidden; flex-shrink: 0;
+        /* Image strip */
+        .prc2-card-img {
+          position: relative; height: 270px; overflow: hidden; flex-shrink: 0;
         }
-        .prc-card-img img {
+        .prc2-card-img img {
           width: 100%; height: 100%; object-fit: cover;
-          filter: brightness(.55) saturate(1.2);
           transition: transform .5s ease;
         }
-        .prc-card:hover .prc-card-img img { transform: scale(1.06); }
-        /* gradient fade */
-        .prc-card-img::after {
-          content: '';
-          position: absolute; bottom: 0; left: 0; right: 0;
-          height: 80%;
-          background: linear-gradient(to top, #141414, transparent);
-        }
-        /* highlight image extra brightness */
-        .prc-card.is-highlight .prc-card-img img {
-          filter: brightness(.65) saturate(1.4);
-        }
+        .prc2-card:hover .prc2-card-img img { transform: scale(1.06); }
+        // .prc2-card-img::after {
+        //   content: '';
+        //   position: absolute; bottom: 0; left: 0; right: 0;
+        //   height: 70%;
+        //   background: linear-gradient(to top, #fff, transparent);
+        // }
+        // .prc2-card.is-highlight .prc2-card-img::after {
+        //   background: linear-gradient(to top, #fff1e8, transparent);
+        // }
 
-        /* top badge */
-        .prc-card-badge {
-          position: absolute; top: 12px; left: 12px; z-index: 2;
-          background: var(--primary,#ff6400);
+        /* badge */
+        .prc2-card-badge {
+          position: absolute; top: 14px; left: 14px; z-index: 2;
+          background: #ff6400;
           color: #fff; font-size: 10px; font-weight: 700;
           letter-spacing: 1.5px; text-transform: uppercase;
-          padding: 4px 12px; border-radius: 100px;
+          padding: 5px 12px; border-radius: 100px;
+          font-family: 'Inter', sans-serif;
+          box-shadow: 0 4px 14px rgba(255,100,0,0.4);
         }
-        .prc-card-tag {
-          position: absolute; top: 12px; right: 12px; z-index: 2;
-          background: rgba(0,0,0,.5); backdrop-filter: blur(8px);
-          border: 1px solid rgba(255,255,255,.1);
-          color: rgba(255,255,255,.7); font-size: 10px; font-weight: 600;
-          letter-spacing: 1.5px; text-transform: uppercase;
-          padding: 4px 10px; border-radius: 100px;
-        }
-
-        /* card body */
-        .prc-card-body {
-          padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1;
+        .prc2-card-tag {
+          position: absolute; top: 14px; right: 14px; z-index: 2;
+          background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+          border: 1px solid rgba(0,0,0,0.1);
+          color: #555; font-size: 10px; font-weight: 600;
+          letter-spacing: 1px; text-transform: uppercase;
+          padding: 5px 10px; border-radius: 100px;
+          font-family: 'Inter', sans-serif;
         }
 
-        /* emoji + title row */
-        .prc-card-title-row {
+        /* Highlight stripe at top */
+        .prc2-card.is-highlight::before {
+          content: '';
+          position: absolute; top: 0; left: 0; right: 0;
+          height: 3px; background: #ff6400; z-index: 3;
+        }
+
+        /* body */
+        .prc2-card-body {
+          padding: 20px 22px 24px; display: flex; flex-direction: column; flex: 1;
+        }
+
+        .prc2-card-title-row {
           display: flex; align-items: flex-start; gap: 10px; margin-bottom: 4px;
         }
-        .prc-card-emoji {
-          font-size: 22px; margin-top: 2px; flex-shrink: 0;
+        .prc2-card-emoji { font-size: 20px; margin-top: 2px; flex-shrink: 0; }
+        .prc2-card-title {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 18px; font-weight: 800;
+          color: #111; line-height: 1.1; letter-spacing: -0.3px;
         }
-        .prc-card-title {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 22px; letter-spacing: .5px;
-          color: #fff; line-height: 1.1;
-        }
-        .prc-card.is-highlight .prc-card-title { color: var(--primary,#ff6400); }
+        .prc2-card.is-highlight .prc2-card-title { color: #ff6400; }
 
-        .prc-card-desc {
-          font-size: 11.5px; color: rgba(255,255,255,.35);
-          font-weight: 500; letter-spacing: .3px;
+        .prc2-card-desc {
+          font-size: 11px; color: #999;
+          font-weight: 600; letter-spacing: .5px;
           text-transform: uppercase; margin-bottom: 16px;
+          font-family: 'Inter', sans-serif;
         }
 
         /* price */
-        .prc-price-row {
-          display: flex; align-items: baseline; gap: 6px; margin-bottom: 6px;
+        .prc2-price-row {
+          display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px;
         }
-        .prc-price {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 44px; color: #fff; line-height: 1; letter-spacing: 1px;
+        .prc2-price {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 42px; font-weight: 900; color: #111; line-height: 1; letter-spacing: -2px;
         }
-        .prc-card.is-highlight .prc-price { color: var(--primary,#ff6400); }
-        .prc-price-per {
-          font-size: 12px; color: rgba(255,255,255,.35);
-          font-weight: 500; letter-spacing: .5px;
+        .prc2-card.is-highlight .prc2-price { color: #ff6400; }
+        .prc2-price-per {
+          font-size: 12px; color: #aaa;
+          font-weight: 500; letter-spacing: .3px;
         }
 
-        /* veg toggle */
-        .prc-toggle {
+        /* toggle */
+        .prc2-toggle {
           display: inline-flex;
-          background: rgba(255,255,255,.05);
-          border: 1px solid rgba(255,255,255,.08);
-          border-radius: 8px; padding: 3px; gap: 2px;
-          margin-bottom: 16px;
-          width:fit-content;
+          background: #f5f3f0;
+          border: 1.5px solid rgba(0,0,0,0.07);
+          border-radius: 10px; padding: 3px; gap: 2px;
+          margin-bottom: 16px; width: fit-content;
         }
-        .prc-toggle-btn {
-          padding: 5px 14px; border-radius: 6px;
+        .prc2-toggle-btn {
+          padding: 5px 14px; border-radius: 7px;
           font-size: 10px; font-weight: 700;
           letter-spacing: 1.5px; text-transform: uppercase;
           border: none; cursor: pointer;
           background: transparent;
-          color: rgba(255,255,255,.3);
-          font-family: 'DM Sans', sans-serif;
-          transition: background .2s, color .2s;
+          color: rgba(0,0,0,0.3);
+          font-family: 'Inter', sans-serif;
+          transition: background .2s, color .2s, box-shadow .2s;
         }
-        .prc-toggle-btn.active {
-          background: var(--primary,#ff6400); color: #fff;
+        .prc2-toggle-btn.active {
+          background: #ff6400; color: #fff;
+          box-shadow: 0 2px 8px rgba(255,100,0,0.3);
         }
 
         /* divider */
-        .prc-card-divider {
+        .prc2-card-divider {
           height: 1px; margin: 12px 0 14px;
-          background: linear-gradient(90deg, rgba(var(--primary-rgb,255,100,0),.25), transparent);
+          background: linear-gradient(90deg, rgba(255,100,0,0.2), transparent);
         }
 
-        /* macro pills — FUEL plans only */
-        .prc-macros {
+        /* macro pills */
+        .prc2-macros {
           display: grid; grid-template-columns: repeat(4,1fr); gap: 6px;
           margin-bottom: 16px;
         }
-        .macro-pill {
-          background: rgba(255,255,255,.04);
-          border: 1px solid rgba(255,255,255,.07);
-          border-radius: 10px; padding: 8px 6px;
-          display: flex; flex-direction: column; align-items: center; gap: 4px;
+        .mpill {
+          background: #f8f6f2;
+          border: 1px solid rgba(0,0,0,0.07);
+          border-radius: 10px; padding: 8px 4px;
+          display: flex; flex-direction: column; align-items: center; gap: 3px;
           text-align: center;
         }
-        .macro-pill-icon {
-          color: var(--primary,#ff6400);
-          display: flex; align-items: center; justify-content: center;
+        .mpill-icon { color: #ff6400; display: flex; align-items: center; justify-content: center; }
+        .mpill-value {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 13px; font-weight: 800; color: #111; letter-spacing: -.3px; line-height: 1;
         }
-        .macro-pill-value {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 15px; color: #fff; letter-spacing: .5px; line-height: 1;
-        }
-        .macro-pill-label {
+        .mpill-label {
           font-size: 9px; font-weight: 600;
           letter-spacing: 1px; text-transform: uppercase;
-          color: rgba(255,255,255,.3);
+          color: #aaa; font-family: 'Inter', sans-serif;
         }
 
-        /* features list */
-        .prc-features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; flex: 1; }
-        .prc-feature {
+        /* features */
+        .prc2-features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; flex: 1; }
+        .prc2-feature {
           display: flex; align-items: flex-start; gap: 8px;
-          font-size: 12.5px; color: rgba(255,255,255,.6); font-weight: 400;
+          font-size: 12.5px; color: #555; font-weight: 400;
+          font-family: 'Inter', sans-serif;
         }
-        .prc-feature-check {
+        .prc2-feature-check {
           width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
-          background: rgba(var(--primary-rgb,255,100,0),.15);
-          border: 1px solid rgba(var(--primary-rgb,255,100,0),.3);
+          background: rgba(255,100,0,0.1);
+          border: 1.5px solid rgba(255,100,0,0.25);
           display: flex; align-items: center; justify-content: center;
-          color: var(--primary,#ff6400); margin-top: 1px;
+          color: #ff6400; margin-top: 1px;
         }
-        .prc-feature-x {
+        .prc2-feature-x {
           width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
-          background: rgba(255,100,100,.1);
-          border: 1px solid rgba(255,100,100,.25);
+          background: rgba(220,38,38,0.08);
+          border: 1.5px solid rgba(220,38,38,0.2);
           display: flex; align-items: center; justify-content: center;
-          color: #f87171; margin-top: 1px;
+          color: #dc2626; margin-top: 1px;
         }
-        .prc-no-item { color: rgba(255,100,100,.7); }
+        .prc2-no-item { color: #dc2626; }
 
         /* CTA */
-        .prc-cta {
-          display: flex; align-items: center; justify-content: center;
-          gap: 8px;
-          background: rgba(255,255,255,.06);
-          border: 1px solid rgba(255,255,255,.1);
-          border-radius: 12px; padding: 13px 20px;
-          color: rgba(255,255,255,.7);
-          font-size: 13px; font-weight: 600; letter-spacing: .5px;
+        .prc2-cta {
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          background: #f5f3f0;
+          border: 1.5px solid rgba(0,0,0,0.1);
+          border-radius: 14px; padding: 13px 20px;
+          color: #555;
+          font-size: 13px; font-weight: 600; letter-spacing: .3px;
           text-decoration: none;
-          transition: background .25s, border-color .25s, color .25s, transform .25s;
+          transition: background .25s, border-color .25s, color .25s, transform .2s;
           margin-top: auto;
+          font-family: 'Inter', sans-serif;
         }
-        .prc-cta:hover, .prc-card.is-highlight .prc-cta {
-          background: var(--primary,#ff6400);
-          border-color: var(--primary,#ff6400);
+        .prc2-cta:hover {
+          background: #ff6400;
+          border-color: #ff6400;
           color: #fff;
           transform: translateY(-1px);
         }
+        .prc2-card.is-highlight .prc2-cta {
+          background: #ff6400;
+          border-color: #ff6400;
+          color: #fff;
+          box-shadow: 0 6px 20px rgba(255,100,0,0.3);
+        }
+        .prc2-card.is-highlight .prc2-cta:hover {
+          background: #e65a00;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 28px rgba(255,100,0,0.4);
+        }
 
-        /* ── Pagination ── */
-        .prc-pagination { display: flex; justify-content: center; margin-top: 32px; }
-        .prc-pagination .swiper-pagination-bullet {
+        /* Pagination */
+        .prc2-pagination {
+          display: flex; justify-content: center; margin-top: 36px;
+        }
+        .prc2-pagination .swiper-pagination-bullet {
           width: 8px; height: 8px;
-          background: var(--primary,#ff6400); opacity: .25;
+          background: #ff6400; opacity: .2;
           border-radius: 100px; transition: all .3s;
         }
-        .prc-pagination .swiper-pagination-bullet-active {
-          opacity: 1; width: 24px;
+        .prc2-pagination .swiper-pagination-bullet-active {
+          opacity: 1; width: 28px;
         }
 
         /* ── Add-ons ── */
-        .prc-addons {
-          margin-top: 64px;
-          background: #111;
-          border: 1px solid rgba(255,255,255,.06);
-          border-radius: 20px;
-          padding: 40px 40px;
+        .prc2-addons {
+          margin-top: 72px;
+          background: #fff;
+          border: 1.5px solid rgba(0,0,0,0.07);
+          border-radius: 24px;
+          padding: 44px 44px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+          position: relative; overflow: hidden;
         }
-        @media (max-width: 640px) { .prc-addons { padding: 28px 20px; } }
+        @media (max-width: 640px) { .prc2-addons { padding: 32px 20px; } }
 
-        .prc-addons-header {
-          display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+        /* Decorative top-left corner accent */
+        .prc2-addons::before {
+          content: '';
+          position: absolute; top: 0; left: 0;
+          width: 200px; height: 200px;
+          background: radial-gradient(circle at top left, rgba(255,100,0,0.06), transparent 70%);
+          pointer-events: none;
         }
-        .prc-addons-icon {
-          width: 36px; height: 36px; border-radius: 10px;
-          background: rgba(var(--primary-rgb,255,100,0),.12);
-          border: 1px solid rgba(var(--primary-rgb,255,100,0),.2);
+
+        .prc2-addons-header {
+          display: flex; align-items: center; gap: 14px; margin-bottom: 32px;
+        }
+        .prc2-addons-icon {
+          width: 44px; height: 44px; border-radius: 12px;
+          background: rgba(255,100,0,0.1);
+          border: 1.5px solid rgba(255,100,0,0.2);
           display: flex; align-items: center; justify-content: center;
-          color: var(--primary,#ff6400);
+          color: #ff6400;
         }
-        .prc-addons-title {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: 26px; letter-spacing: .5px; color: #fff;
+        .prc2-addons-title {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 22px; font-weight: 800; letter-spacing: -.5px; color: #111;
+        }
+        .prc2-addons-sub {
+          font-size: 13px; color: #999; font-weight: 400;
+          font-family: 'Inter', sans-serif; margin-top: 2px;
         }
 
-        .prc-addons-grid {
+        .prc2-addons-grid {
           display: grid; grid-template-columns: repeat(4,1fr); gap: 16px;
         }
-        @media (max-width: 900px) { .prc-addons-grid { grid-template-columns: repeat(2,1fr); } }
-        @media (max-width: 480px) { .prc-addons-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .prc2-addons-grid { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 480px) { .prc2-addons-grid { grid-template-columns: 1fr; } }
 
-        .prc-addon-card {
-          background: rgba(255,255,255,.03);
-          border: 1px solid rgba(255,255,255,.07);
-          border-radius: 14px; padding: 18px 16px;
-          transition: border-color .25s, background .25s;
+        .prc2-addon-card {
+          background: #fafaf8;
+          border: 1.5px solid rgba(0,0,0,0.07);
+          border-radius: 16px; padding: 20px 18px;
+          transition: border-color .25s, background .25s, transform .25s, box-shadow .25s;
+          cursor: default;
         }
-        .prc-addon-card:hover {
-          border-color: rgba(var(--primary-rgb,255,100,0),.25);
-          background: rgba(var(--primary-rgb,255,100,0),.04);
+        .prc2-addon-card:hover {
+          border-color: rgba(255,100,0,0.3);
+          background: #fff;
+          transform: translateY(-3px);
+          box-shadow: 0 8px 24px rgba(255,100,0,0.1);
         }
-        .prc-addon-emoji { font-size: 24px; margin-bottom: 10px; }
-        .prc-addon-label {
-          font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px;
+        .prc2-addon-emoji {
+          font-size: 28px; margin-bottom: 12px; display: block;
         }
-        .prc-addon-detail {
-          font-size: 11.5px; color: rgba(255,255,255,.35); line-height: 1.6; font-weight: 300;
+        .prc2-addon-label {
+          font-size: 14px; font-weight: 700; color: #111; margin-bottom: 5px;
+          font-family: 'Montserrat', sans-serif; letter-spacing: -.2px;
+        }
+        .prc2-addon-detail {
+          font-size: 12px; color: #888; line-height: 1.6; font-weight: 400;
+          font-family: 'Inter', sans-serif;
+        }
+
+        /* ── Section bottom CTA strip ── */
+        .prc2-cta-strip {
+          margin-top: 56px;
+          background: linear-gradient(135deg, #ff6400, #ff8c42);
+          border-radius: 24px;
+          padding: 44px 48px;
+          display: flex; align-items: center; justify-content: space-between; gap: 32px;
+          flex-wrap: wrap;
+          position: relative; overflow: hidden;
+        }
+        .prc2-cta-strip::before {
+          content: '';
+          position: absolute; inset: 0;
+          background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+          background-size: 20px 20px;
+        }
+        .prc2-cta-strip::after {
+          content: '';
+          position: absolute; top: -60px; right: -60px;
+          width: 250px; height: 250px;
+          background: rgba(255,255,255,0.08);
+          border-radius: 50%;
+        }
+        .prc2-strip-left { position: relative; z-index: 1; }
+        .prc2-strip-heading {
+          font-family: 'Montserrat', sans-serif;
+          font-size: clamp(22px, 3vw, 34px);
+          font-weight: 900; letter-spacing: -1px;
+          color: #fff; margin: 0 0 8px;
+        }
+        .prc2-strip-sub {
+          font-size: 14px; color: rgba(255,255,255,0.8);
+          font-weight: 400; margin: 0;
+          font-family: 'Inter', sans-serif;
+        }
+        .prc2-strip-btn {
+          position: relative; z-index: 1;
+          display: inline-flex; align-items: center; gap: 10px;
+          background: #fff; color: #ff6400;
+          font-size: 14px; font-weight: 700; letter-spacing: .3px;
+          padding: 15px 30px; border-radius: 100px;
+          text-decoration: none;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+          transition: transform .2s, box-shadow .2s;
+          font-family: 'Inter', sans-serif;
+          white-space: nowrap;
+        }
+        .prc2-strip-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 14px 36px rgba(0,0,0,0.2);
+        }
+        .prc2-strip-btn-icon {
+          width: 32px; height: 32px; border-radius: 50%;
+          background: rgba(255,100,0,0.12);
+          display: inline-flex; align-items: center; justify-content: center;
         }
       `}</style>
 
-            <section className="prc-section">
-                <div className="prc-glow-tl" />
-                <div className="prc-glow-br" />
-                <div className="prc-grain" />
+      <section className="prc2-section">
+        <div className="prc2-glow-tl" />
+        <div className="prc2-glow-br" />
+        <div className="prc2-dots" />
 
-                <div className="prc-container">
+        {/* Decorative SVG circles in bg */}
+        <svg className="prc2-bg-svg" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+          <circle cx="1380" cy="80" r="180" stroke="rgba(255,100,0,0.06)" strokeWidth="1.5" fill="none" />
+          <circle cx="1380" cy="80" r="120" stroke="rgba(255,100,0,0.04)" strokeWidth="1" fill="none" />
+          <circle cx="60" cy="820" r="150" stroke="rgba(255,100,0,0.05)" strokeWidth="1.5" fill="none" />
+          <path d="M 0 200 Q 200 100 400 250 T 800 200" stroke="rgba(255,100,0,0.04)" strokeWidth="1.5" fill="none" />
+          <path d="M 800 700 Q 1000 600 1200 750 T 1440 700" stroke="rgba(255,100,0,0.04)" strokeWidth="1.5" fill="none" />
+        </svg>
 
-                    {/* ── Header ── */}
-                    <div className="prc-header">
-                        <div>
-                            <div className="prc-eyebrow">
-                                <div className="prc-eyebrow-dot" />
-                                <span className="prc-eyebrow-text">🔥 Fuel Plate by MMC</span>
+        <div className="prc2-container">
+
+          {/* ── Header ── */}
+          <div className="prc2-header">
+            <div>
+              <div className="prc2-eyebrow">
+                <div className="prc2-eyebrow-dot" />
+                <span className="prc2-eyebrow-text">🔥 Fuel Plate by MMC</span>
+              </div>
+              <h2 className="prc2-heading">
+                Choose Your<br />
+                <em>Perfect Plan</em>
+              </h2>
+            </div>
+
+            <div className="prc2-header-right">
+              <p className="prc2-subtext">
+                Performance meal plans — freshly prepared by chefs, designed by nutrition experts.
+                Mon – Fri · 20 meals / month.
+              </p>
+              <div className="prc2-why-grid">
+                {whyPoints.map((p, i) => (
+                  <div key={i} className="prc2-why-item">
+                    <div className="prc2-why-check">✓</div>
+                    {p.text}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Swiper ── */}
+          <div className="prc2-swiper-wrap">
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              loop
+              spaceBetween={20}
+              slidesPerView={1}
+              autoplay={{ delay: 4500, disableOnInteraction: false }}
+              pagination={{ clickable: true, el: '.prc2-pagination' }}
+              breakpoints={{ 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
+              className="prc2-swiper"
+              style={{ paddingBottom: '8px' }}
+            >
+              {plans.map((plan, i) => {
+                const nonveg = isNonVeg(i);
+                const hasDual = plan.vegPrice && plan.nonvegPrice;
+                const price = nonveg && plan.nonvegPrice
+                  ? plan.nonvegPrice
+                  : plan.vegPrice ?? plan.nonvegPrice;
+
+                return (
+                  <SwiperSlide key={i}>
+                    <div className={`prc2-card${plan.highlight ? ' is-highlight' : ''}`}>
+                      {/* Image */}
+                      <div className="prc2-card-img">
+                        <img src={plan.image} alt={plan.title} />
+                        {plan.highlight && (
+                          <div className="prc2-card-badge">
+                            {plan.title === 'FUEL MAX' ? '⭐ Most Popular' : '🥩 Elite'}
+                          </div>
+                        )}
+                        <div className="prc2-card-tag">{plan.tag}</div>
+                      </div>
+
+                      <div className="prc2-card-body">
+                        {/* Title */}
+                        <div className="prc2-card-title-row">
+                          <span className="prc2-card-emoji">{plan.emoji}</span>
+                          <div>
+                            <div className="prc2-card-title">{plan.title}</div>
+                            <div className="prc2-card-desc">{plan.desc}</div>
+                          </div>
+                        </div>
+
+                        {/* Price */}
+                        <div className="prc2-price-row">
+                          <span className="prc2-price">{price}</span>
+                          <span className="prc2-price-per">/ month</span>
+                        </div>
+
+                        {/* Toggle */}
+                        {hasDual && (
+                          <div className="prc2-toggle">
+                            <button
+                              className={`prc2-toggle-btn${!nonveg ? ' active' : ''}`}
+                              onClick={() => toggle(i, 'veg')}
+                            >🌱 Veg</button>
+                            <button
+                              className={`prc2-toggle-btn${nonveg ? ' active' : ''}`}
+                              onClick={() => toggle(i, 'nonveg')}
+                            >🍗 Non-Veg</button>
+                          </div>
+                        )}
+
+                        <div className="prc2-card-divider" />
+
+                        {/* Macros */}
+                        {plan.isFuel && plan.macros && (
+                          <div className="prc2-macros">
+                            <MacroPill icon={<Beef size={11} />} label="Protein" value={(plan.macros as any).protein} />
+                            <MacroPill icon={<Zap size={11} />} label="Carbs" value={(plan.macros as any).carbs} />
+                            <MacroPill icon={<Flame size={11} />} label="Fat" value={(plan.macros as any).fat} />
+                            <MacroPill icon={<Dumbbell size={11} />} label="kcal" value={(plan.macros as any).cal} />
+                          </div>
+                        )}
+
+                        {/* Features */}
+                        <div className="prc2-features">
+                          {plan.features.map((f, fi) => (
+                            <div key={fi} className="prc2-feature">
+                              <div className="prc2-feature-check"><Check size={8} strokeWidth={3} /></div>
+                              {f}
                             </div>
-                            <h2 className="prc-heading">
-                                Choose Your<br /><em>Perfect Plan</em>
-                            </h2>
-                        </div>
-
-                        <div className="prc-header-right">
-                            <p className="prc-subtext">
-                                Performance meal plans — freshly prepared by chefs, designed by nutrition experts. Mon – Fri · 20 meals / month.
-                            </p>
-                            <div className="prc-why">
-                                {whyPoints.map((p, i) => (
-                                    <div key={i} className="prc-why-pill">
-                                        <div className="prc-why-check"><Check size={9} strokeWidth={3} /></div>
-                                        {p}
-                                    </div>
-                                ))}
+                          ))}
+                          {plan.noItems.map((n, ni) => (
+                            <div key={ni} className="prc2-feature prc2-no-item">
+                              <div className="prc2-feature-x"><X size={8} strokeWidth={3} /></div>
+                              {n}
                             </div>
+                          ))}
                         </div>
+
+                        {/* CTA */}
+                        <Link href="/appointment" className="prc2-cta">
+                          Choose Plan
+                          <ChevronRight size={14} />
+                        </Link>
+                      </div>
                     </div>
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+            <div className="prc2-pagination" />
+          </div>
 
-                    {/* ── Swiper ── */}
-                    <div className="prc-swiper-wrap">
-                        <Swiper
-                            modules={[Autoplay, Pagination]}
-                            loop
-                            spaceBetween={20}
-                            slidesPerView={1}
-                            autoplay={{ delay: 4500, disableOnInteraction: false }}
-                            pagination={{ clickable: true, el: '.prc-pagination' }}
-                            breakpoints={{ 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
-                            className="prc-swiper"
-                            style={{ paddingBottom: '8px' }}
-                        >
-                            {plans.map((plan, i) => {
-                                const nonveg = isNonVeg(i);
-                                const hasDual = plan.vegPrice && plan.nonvegPrice;
-                                const price = nonveg && plan.nonvegPrice
-                                    ? plan.nonvegPrice
-                                    : plan.vegPrice ?? plan.nonvegPrice;
-
-                                return (
-                                    <SwiperSlide key={i}>
-                                        <div className={`prc-card${plan.highlight ? ' is-highlight' : ''}`}>
-
-                                            {/* food image */}
-                                            <div className="prc-card-img">
-                                                <img src={plan.image} alt={plan.title} />
-                                                {plan.highlight && (
-                                                    <div className="prc-card-badge">
-                                                        {plan.title === 'FUEL MAX' ? '⭐ Most Popular' : '🥩 Elite'}
-                                                    </div>
-                                                )}
-                                                <div className="prc-card-tag">{plan.tag}</div>
-                                            </div>
-
-                                            <div className="prc-card-body">
-                                                {/* title */}
-                                                <div className="prc-card-title-row">
-                                                    <span className="prc-card-emoji">{plan.emoji}</span>
-                                                    <div>
-                                                        <div className="prc-card-title">{plan.title}</div>
-                                                        <div className="prc-card-desc">{plan.desc}</div>
-                                                    </div>
-                                                </div>
-
-                                                {/* price */}
-                                                <div className="prc-price-row">
-                                                    <span className="prc-price">{price}</span>
-                                                    <span className="prc-price-per">/ month</span>
-                                                </div>
-
-                                                {/* veg/non-veg toggle — only for dual-price plans */}
-                                                {hasDual && (
-                                                    <div className="prc-toggle">
-                                                        <button
-                                                            className={`prc-toggle-btn${!nonveg ? ' active' : ''}`}
-                                                            onClick={() => setVegMode(prev => ({ ...prev, [i]: 'veg' }))}
-                                                        >🌱 Veg</button>
-                                                        <button
-                                                            className={`prc-toggle-btn${nonveg ? ' active' : ''}`}
-                                                            onClick={() => setVegMode(prev => ({ ...prev, [i]: 'nonveg' }))}
-                                                        >🍗 Non-Veg</button>
-                                                    </div>
-                                                )}
-
-                                                <div className="prc-card-divider" />
-
-                                                {/* macro icons — FUEL plans only */}
-                                                {plan.isFuel && plan.macros && (
-                                                    <div className="prc-macros">
-                                                        <MacroPill icon={<Beef size={12} />} label="Protein" value={plan.macros.protein} />
-                                                        <MacroPill icon={<Zap size={12} />} label="Carbs" value={plan.macros.carbs} />
-                                                        <MacroPill icon={<Flame size={12} />} label="Fat" value={plan.macros.fat} />
-                                                        <MacroPill icon={<Dumbbell size={12} />} label="kcal" value={plan.macros.cal} />
-                                                    </div>
-                                                )}
-
-                                                {/* features */}
-                                                <div className="prc-features">
-                                                    {plan.features.map((f, fi) => (
-                                                        <div key={fi} className="prc-feature">
-                                                            <div className="prc-feature-check"><Check size={8} strokeWidth={3} /></div>
-                                                            {f}
-                                                        </div>
-                                                    ))}
-                                                    {plan.noItems.map((n, ni) => (
-                                                        <div key={ni} className="prc-feature prc-no-item">
-                                                            <div className="prc-feature-x"><X size={8} strokeWidth={3} /></div>
-                                                            {n}
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                {/* CTA */}
-                                                <Link href="/appointment" className="prc-cta">
-                                                    Choose Plan
-                                                    <Plus size={14} />
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </SwiperSlide>
-                                );
-                            })}
-                        </Swiper>
-                        <div className="prc-pagination" />
-                    </div>
-
-                    {/* ── Add-ons ── */}
-                    <div className="prc-addons">
-                        <div className="prc-addons-header">
-                            <div className="prc-addons-icon"><Plus size={18} /></div>
-                            <div className="prc-addons-title">Optional Add-Ons</div>
-                        </div>
-                        <div className="prc-addons-grid">
-                            {addons.map((a, i) => (
-                                <div key={i} className="prc-addon-card">
-                                    <div className="prc-addon-emoji">{a.emoji}</div>
-                                    <div className="prc-addon-label">{a.label}</div>
-                                    <div className="prc-addon-detail">{a.detail}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
+          {/* ── Add-ons ── */}
+          <div className="prc2-addons">
+            <div className="prc2-addons-header">
+              <div className="prc2-addons-icon"><Plus size={20} /></div>
+              <div>
+                <div className="prc2-addons-title">Optional Add-Ons</div>
+                <div className="prc2-addons-sub">Customize your plan with premium upgrades</div>
+              </div>
+            </div>
+            <div className="prc2-addons-grid">
+              {addons.map((a, i) => (
+                <div key={i} className="prc2-addon-card">
+                  <span className="prc2-addon-emoji">{a.emoji}</span>
+                  <div className="prc2-addon-label">{a.label}</div>
+                  <div className="prc2-addon-detail">{a.detail}</div>
                 </div>
-            </section>
-        </>
-    );
+              ))}
+            </div>
+          </div>
+
+          {/* ── CTA Strip ── */}
+          <div className="prc2-cta-strip">
+            <div className="prc2-strip-left">
+              <h3 className="prc2-strip-heading">Ready to Start Your Fuel Journey?</h3>
+              <p className="prc2-strip-sub">Book a free consultation — we'll build the perfect plan for your goals.</p>
+            </div>
+            <Link href="/appointment" className="prc2-strip-btn">
+              Book Free Consultation
+              <span className="prc2-strip-btn-icon">
+                <ChevronRight size={16} />
+              </span>
+            </Link>
+          </div>
+
+        </div>
+      </section>
+    </>
+  );
 };
 
 export default PricingSection;
