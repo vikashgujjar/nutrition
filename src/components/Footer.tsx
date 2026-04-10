@@ -171,7 +171,7 @@ const Footer = () => {
           </div>
 
           <div className="footer2-bottom">
-            <div>© 2026 Fuel Plate by <span className="uppercase">Future IT Touch Pvt. Ltd.</span> All rights reserved.</div>
+            <div>© 2026 Fuel Plate. All rights reserved.</div>
             <div className="footer2-bot-links">
               <Link href="#" className="footer2-link">Privacy</Link>
               <Link href="#" className="footer2-link">Terms</Link>
